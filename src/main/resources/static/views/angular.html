@@ -15,7 +15,9 @@
         </tr>
         <tr ng-repeat="entry in data.allentries">
             <td>{{entry.rank}}</td>
-            <td>{{entry.tagStr}}</td>
+            <td class="top10" ng-show="entry.rank < 2">{{entry.tagStr}}</td>
+            <td class="top10to50" ng-show="entry.rank > 1 && entry.rank < 3">{{entry.tagStr}}</td>
+            <td class="top50to100" ng-show="entry.rank > 2">{{entry.tagStr}}</td>
         </tr>
     </table>
     <div id="header-message">Angular Test</div>
