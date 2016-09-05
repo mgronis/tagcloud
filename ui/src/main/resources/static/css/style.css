@@ -1,0 +1,37 @@
+#header-message {
+    font-size: 24px;
+}
+
+div.top10 {
+    color: blue;
+    font-size: larger;
+}
+
+div.top10to50 {
+    color: cornflowerblue;
+    font-size: medium;
+}
+
+div.top50to100 {
+    color: lightblue;
+    font-size: small;
+}
+
+div.hover {
+    color: lightgreen;
+}
+
+td.top10 {
+    color: blue;
+    font-size: larger;
+}
+
+td.top10to50 {
+    color: cornflowerblue;
+    font-size: medium;
+}
+
+td.top50to100 {
+    color: lightblue;
+    font-size: small;
+}
