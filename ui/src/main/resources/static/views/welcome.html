@@ -3,26 +3,19 @@
 <head>
     <link rel="stylesheet" href="/css/style.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script type="text/javascript" src="/js/angularTest.js"></script>
+    <script type="text/javascript" src="/js/cloud.js"></script>
     <meta charset="UTF-8">
-    <title>Testing AngularJS</title>
+    <title>xCloud</title>
 </head>
 <body>
+    <h1>xCloud</h1>
     <table ng-controller="DataController as data">
-        <tr>
-            <th>Rank</th>
-            <th>Tag</th>
-        </tr>
         <tr ng-repeat="entry in data.allentries">
-            <td>{{entry.rank}}</td>
+            <!--<td>{{entry.rank}}</td>-->
             <td class="top10" ng-show="entry.rank < 2">{{entry.tagStr}}</td>
             <td class="top10to50" ng-show="entry.rank > 1 && entry.rank < 3">{{entry.tagStr}}</td>
             <td class="top50to100" ng-show="entry.rank > 2">{{entry.tagStr}}</td>
         </tr>
     </table>
-    <div id="header-message">Angular Test</div>
-    <div class="top10">Hej</div>
-    <div class="top10to50">Hej</div>
-    <div class="top50to100">Hej</div>
 </body>
 </html>
