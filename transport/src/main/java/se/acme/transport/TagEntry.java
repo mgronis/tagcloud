@@ -1,9 +1,16 @@
 package se.acme.transport;
 
-public class TagEntry {
+import java.io.Serializable;
 
-    private final int rank;
-    private final String tagStr;
+public class TagEntry implements Serializable {
+
+    public static final long serialVersionUID = 1L;
+
+    private int rank;
+    private String tagStr;
+
+    public TagEntry() {
+    }
 
     public TagEntry(int rank, String tagStr) {
 

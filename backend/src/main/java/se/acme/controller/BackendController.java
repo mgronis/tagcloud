@@ -35,4 +35,14 @@ public class BackendController {
         return ImmutableList.of(new TagEntry(1, feed), new TagEntry(2, feed), new TagEntry(3, feed));
     }
 
+    @RequestMapping("entry")
+    public TagEntry entry() {
+        return new TagEntry(3, "Test");
+    }
+
+    @RequestMapping("collection")
+    public Collection<TagEntry> collection() {
+        return ImmutableList.of(new TagEntry(1, "Test1"), new TagEntry(2, "Test2"));
+    }
+
 }

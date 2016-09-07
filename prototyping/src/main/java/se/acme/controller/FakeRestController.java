@@ -16,4 +16,9 @@ public class FakeRestController {
         return ImmutableList.of(new TagEntry(1, "Volvo"), new TagEntry(2, "Opel"), new TagEntry(3, "Saab"));
     }
 
+    @RequestMapping("data2")
+    public TagEntry fakeData2() {
+        return new TagEntry(3, "gurka");
+    }
+
 }
