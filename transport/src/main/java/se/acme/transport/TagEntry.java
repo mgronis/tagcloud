@@ -12,7 +12,7 @@ public class TagEntry implements Serializable {
     public TagEntry() {
     }
 
-    public TagEntry(int rank, String tagStr) {
+    public TagEntry(long rank, String tagStr) {
 
         this.rank = rank;
         this.tagStr = tagStr;

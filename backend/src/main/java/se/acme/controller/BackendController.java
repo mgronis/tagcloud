@@ -1,17 +1,37 @@
 package se.acme.controller;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.twitter.api.SearchResults;
+import org.springframework.social.twitter.api.Tweet;
+import org.springframework.social.twitter.api.Twitter;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import se.acme.transport.TagEntry;
+import se.acme.util.CommonUtils;
 
-import java.util.Collection;
+import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/")
 public class BackendController {
+
+    private Twitter twitter;
+
+    private ConnectionRepository connectionRepository;
+
+    @Inject
+    public BackendController(Twitter twitter, ConnectionRepository connectionRepository) {
+        this.twitter = twitter;
+        this.connectionRepository = connectionRepository;
+    }
 
     @RequestMapping("static/tag")
     public Collection<TagEntry> staticTags() {
@@ -26,7 +46,36 @@ public class BackendController {
     @RequestMapping("tag")
     public Collection<TagEntry> tags(@RequestParam(value="tag", required=true, defaultValue="tag") String tag, Model model) {
 //        model.addAttribute("tag", tag);
-        return ImmutableList.of(new TagEntry(1, tag), new TagEntry(2, tag), new TagEntry(3, tag));
+        Connection<Twitter> primaryConnection = connectionRepository.findPrimaryConnection(Twitter.class);
+
+        Map<String, Long> wordDensity = Maps.newHashMap();
+
+        // TODO: Handle big results
+        SearchResults searchResult = twitter.searchOperations().search(tag);
+        List<Tweet> tweets = searchResult.getTweets();
+
+        for (Tweet tweet : tweets) {
+            String tweetText = tweet.getText();
+            Arrays.stream(tweetText.split(" ")).forEach(str -> increaseDensity(wordDensity, str));
+        }
+
+        return wordDensity.entrySet().stream()
+                .sorted((entry1, entry2) -> CommonUtils.compareLong(entry1, entry2))
+                .map(entry -> new TagEntry(entry.getValue(), entry.getKey())) //The UI expects a ranking from 100 to 1
+                                                                              // not the actual density value
+                .limit(100L)
+                .collect(Collectors.toList());
+    }
+
+    @VisibleForTesting
+    protected void increaseDensity(Map<String, Long> wordDensity, String word) {
+        Long density = wordDensity.get(word);
+        if (density == null){
+            wordDensity.put(word, 1L);
+        }
+        else {
+            density++;
+        }
     }
 
     @RequestMapping("rss")
