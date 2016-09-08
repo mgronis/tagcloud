@@ -85,7 +85,7 @@ public class BackendController {
             wordDensity.put(word, 1L);
         }
         else {
-            density++;
+            wordDensity.replace(word, ++density);
         }
     }
 
