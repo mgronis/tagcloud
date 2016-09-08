@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/")
 public class BackendController {
 
+    public static final String SPACE_CHARACTER = " ";
     private Twitter twitter;
 
     private ConnectionRepository connectionRepository;
@@ -46,17 +47,19 @@ public class BackendController {
     @RequestMapping("tag")
     public Collection<TagEntry> tags(@RequestParam(value="tag", required=true, defaultValue="tag") String tag, Model model) {
 //        model.addAttribute("tag", tag);
-        Connection<Twitter> primaryConnection = connectionRepository.findPrimaryConnection(Twitter.class);
+        final SearchResults searchResult = readTwitterData(tag);
 
-        Map<String, Long> wordDensity = Maps.newHashMap();
+        return findTop100Words(searchResult);
+    }
 
-        // TODO: Handle big results
-        SearchResults searchResult = twitter.searchOperations().search(tag);
+    @VisibleForTesting
+    protected Collection<TagEntry> findTop100Words(SearchResults searchResult) {
         List<Tweet> tweets = searchResult.getTweets();
+        Map<String, Long> wordDensity = Maps.newHashMap();
 
         for (Tweet tweet : tweets) {
             String tweetText = tweet.getText();
-            Arrays.stream(tweetText.split(" ")).forEach(str -> increaseDensity(wordDensity, str));
+            Arrays.stream(tweetText.split(SPACE_CHARACTER)).forEach(str -> increaseDensity(wordDensity, str));
         }
 
         return wordDensity.entrySet().stream()
@@ -65,6 +68,14 @@ public class BackendController {
                                                                               // not the actual density value
                 .limit(100L)
                 .collect(Collectors.toList());
+    }
+
+    private SearchResults readTwitterData(@RequestParam(value = "tag", required = true, defaultValue = "tag") String tag) {
+        Connection<Twitter> primaryConnection = connectionRepository.findPrimaryConnection(Twitter.class);
+
+
+        // TODO: Handle big results
+        return twitter.searchOperations().search(tag);
     }
 
     @VisibleForTesting
