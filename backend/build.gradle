@@ -33,6 +33,7 @@ dependencies {
 	}
 	compile("org.springframework.boot:spring-boot-starter-jetty")
 	compile("com.google.guava:guava:19.0")
+	compile 'org.jsoup:jsoup:1.9.2'
 //	compile('org.springframework.boot:spring-boot-starter')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 

@@ -1,14 +1,18 @@
 package se.acme.controller;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.social.twitter.api.SearchResults;
 import org.springframework.social.twitter.api.Tweet;
 import se.acme.transport.TagEntry;
+import se.acme.util.CommonUtils;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -70,6 +74,5 @@ public class BackendControllerTest {
                 new TagEntry(1L, "with")
         );
     }
-
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import se.acme.transport.TagEntry;
 import se.acme.util.CommonUtils;
+import se.acme.util.RssReader;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -62,6 +63,10 @@ public class BackendController {
             Arrays.stream(tweetText.split(SPACE_CHARACTER)).forEach(str -> increaseDensity(wordDensity, str));
         }
 
+        return createRestResultFromMap(wordDensity);
+    }
+
+    private Collection<TagEntry> createRestResultFromMap(Map<String, Long> wordDensity) {
         return wordDensity.entrySet().stream()
                 .sorted((entry1, entry2) -> CommonUtils.compareLong(entry1, entry2))
                 .map(entry -> new TagEntry(entry.getValue(), entry.getKey())) //The UI expects a ranking from 100 to 1
@@ -90,9 +95,21 @@ public class BackendController {
     }
 
     @RequestMapping("rss")
-    public Collection<TagEntry> rss(@RequestParam(value="feed", required=true, defaultValue="feed") String feed, Model model) {
-//        model.addAttribute("feed", feed);
-        return ImmutableList.of(new TagEntry(1, feed), new TagEntry(2, feed), new TagEntry(3, feed));
+    public Collection<TagEntry> rss(@RequestParam(value="feed", required=true, defaultValue="") String feed, Model model) {
+        Collection<String> descriptionsFromFeed = readItemDescriptionsFromFeed(feed);
+
+        return createRestResultFromMap(createWordDensityMap(descriptionsFromFeed));
+    }
+
+    private Map<String, Long> createWordDensityMap(Collection<String> descriptionsFromFeed) {
+        Map<String, Long> wordDensity = new HashMap<>();
+        descriptionsFromFeed.stream().flatMap(itemDescr -> Arrays.stream(itemDescr.split(SPACE_CHARACTER))).forEach(str -> increaseDensity(wordDensity, str));
+        return wordDensity;
+    }
+
+    private Collection<String> readItemDescriptionsFromFeed(@RequestParam(value = "feed", required = true, defaultValue = "") String feed) {
+        RssReader rssReader = new RssReader(feed);
+        return rssReader.readItemDescriptions();
     }
 
     @RequestMapping("entry")
