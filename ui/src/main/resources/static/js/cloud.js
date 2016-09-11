@@ -4,7 +4,7 @@
     app.controller('DataController', [ '$http', function($http){
         var store = this;
         store.allentries = [];
-        $http.get('http://localhost:8080/fake/data').success(function(data) {
+        $http.get('http://localhost:8080/import/tag').success(function(data) {
             store.allentries = data;
         })
     }]);
